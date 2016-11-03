@@ -1,8 +1,8 @@
 {
-  "name": "sandbox-scraper",
+  "name": "digikey-scraper-sandbox",
   "private": "true",
   "version": "0.0.1",
-  "description": "scrapes app data from xxx",
+  "description": "scraper",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/**/lib.*.js",
@@ -10,17 +10,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alincode/scraper-sandbox"
+    "url": "https://github.com/alincode/digikey-scraper-sandbox"
   },
   "keywords": [
     "scraper"
   ],
   "author": "alincode <alin.code@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/facundoolano/google-play-scraper/issues"
-  },
-  "homepage": "https://github.com/facundoolano/google-play-scraper",
   "dependencies": {
     "babel-core": "^6.9.0",
     "babel-plugin-transform-runtime": "^6.1.2",
