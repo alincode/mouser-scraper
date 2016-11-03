@@ -1,8 +1,8 @@
 {
   "name": "sandbox-scraper",
   "private": "true",
-  "version": "3.1.6",
-  "description": "scrapes app data from google play store",
+  "version": "0.0.1",
+  "description": "scrapes app data from xxx",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/**/lib.*.js",
@@ -10,14 +10,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/facundoolano/google-play-scraper"
+    "url": "https://github.com/alincode/scraper-sandbox"
   },
   "keywords": [
-    "google",
-    "play",
     "scraper"
   ],
-  "author": "Facundo Olano",
+  "author": "alincode <alin.code@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/facundoolano/google-play-scraper/issues"
