@@ -3,7 +3,7 @@
   "private": "true",
   "version": "0.0.1",
   "description": "scraper",
-  "main": "dict/index.js",
+  "main": "dict/product.js",
   "scripts": {
     "test": "npm run build && mocha test/**/lib.*.js",
     "dev-test": "nodemon --exec 'mocha test/**/lib.*.js' || true",
