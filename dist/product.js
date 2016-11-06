@@ -21,9 +21,10 @@ var R = require('ramda');
 var htmlToText = require('html-to-text');
 
 var Product = function () {
-  function Product(url) {
+  function Product(html, url) {
     _classCallCheck(this, Product);
 
+    this.html = html;
     this.url = url;
   }
 
@@ -31,6 +32,8 @@ var Product = function () {
     key: 'getResult',
     value: function getResult() {
       var _this = this;
+
+      if (this.html) return this.parseFields(cheerio.load(html));
 
       var url = this.url;
       var p = new Promise(function (resolve, reject) {
