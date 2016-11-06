@@ -3,10 +3,15 @@
   "private": "true",
   "version": "0.0.1",
   "description": "scraper",
-  "main": "index.js",
+  "main": "dict/index.js",
   "scripts": {
-    "test": "mocha test/**/lib.*.js",
-    "dev-test": "nodemon --exec 'mocha test/**/lib.*.js' || true"
+    "test": "node node_modules/mocha/bin/mocha --reporter spec test-dist/*",
+    "test2": "mocha test/**/lib.*.js",
+    "dev-test": "nodemon --exec 'mocha test/**/lib.*.js' || true",
+    "build:source": "rimraf dist/ && babel lib/ --out-dir dist/",
+    "build:tests": "rimraf test-dist/ && babel test/ --out-dir test-dist/",
+    "clean": "rimraf dist/ && rimraf test-dist/",
+    "build": "npm run build:source && npm run build:tests"
   },
   "repository": {
     "type": "git",
@@ -35,6 +40,7 @@
     "throttled-request": "*"
   },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
     "chai": "*",
     "chai-as-promised": "^6.0.0",
     "eslint": "*",
@@ -44,6 +50,7 @@
     "eslint-plugin-standard": "*",
     "mocha": "^2.5.3",
     "promise-log": "*",
+    "rimraf": "^2.5.4",
     "validator": "*"
   }
 }

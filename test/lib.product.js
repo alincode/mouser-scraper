@@ -2,7 +2,7 @@ import {
   ProductFields
 }
 from './field';
-const digikey = require('../index');
+const digikey = require('../lib/index');
 
 describe('product page', function() {
   it('case 1', async(done) => {
