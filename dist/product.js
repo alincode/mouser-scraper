@@ -1,33 +1,18 @@
 'use strict';
 
-var product = function () {
-  var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(opts) {
-    return regeneratorRuntime.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            return _context.abrupt('return', new Promise(function (resolve, reject) {
-              var url = buildUrl(opts);
-              request(url, opts.throttle).then(cheerio.load).then(parseFields).then(function (app) {
-                app.url = url;
-                resolve(app);
-              }).catch(reject);
-            }));
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
-          case 1:
-          case 'end':
-            return _context.stop();
-        }
-      }
-    }, _callee, this);
-  }));
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  return function product(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
+var _lodash = require('lodash');
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var request = require('./utils/request');
 var memoize = require('./utils/memoize');
@@ -35,135 +20,181 @@ var cheerio = require('cheerio');
 var R = require('ramda');
 var htmlToText = require('html-to-text');
 
-function getData(htmlString) {
-  var data = htmlToText.fromString(htmlString, {
-    wordwrap: 130
-  });
-  return data;
-}
+var Product = function () {
+  function Product(url) {
+    _classCallCheck(this, Product);
 
-function getArrayData($, selector) {
-  var data = htmlToText.fromString($(selector), {
-    wordwrap: 130
-  });
-  return _.split(data, ' ');
-}
-
-function getIndex(data, title) {
-  var index = _.findIndex(data, function (o) {
-    return o.indexOf(title) != -1;
-  });
-  return index;
-}
-
-function getValue(value, title) {
-  if (value.indexOf(title) != -1) {
-    return value.substring(title.length + 1);
+    this.url = url;
   }
-  return;
-}
 
-function getInfoRows($, initFields) {
-  var fields = initFields;
-  var infoRows = [];
+  _createClass(Product, [{
+    key: 'getResult',
+    value: function getResult() {
+      var _this = this;
 
-  $('#product-details-side tr').each(function (i, elem) {
-    infoRows[i] = getData($(this).html());
-  });
-
-  _.forEach(infoRows, function (value, key) {
-    if (getValue(value, 'Digi-Key零件編號')) {
-      fields.sku = getValue(value, 'Digi-Key零件編號');
-    } else if (getValue(value, '現有數量')) {
-      fields.amount = getValue(value, '現有數量');
-      if (!_.isNumber(fields.amount)) fields.amount = fields.amount.split(' ')[0];
-    } else if (getValue(value, '製造商 ')) {
-      fields.mfs = getValue(value, '製造商');
-    } else if (getValue(value, '製造商零件編號')) {
-      fields.pn = getValue(value, '製造商零件編號');
-    } else if (getValue(value, '說明 ')) {
-      fields.desc = getValue(value, '說明');
-    } else if (getValue(value, '無鉛狀態 / RoHS 指令狀態')) {
-      fields.leadAndRohs = getValue(value, '無鉛狀態 / RoHS 指令狀態');
-    } else {}
-  });
-  return fields;
-}
-
-function getDocRows($) {
-  var docRows = [];
-  var docs = [];
-
-  $('.leftdivs .attributes-table-main td').each(function (i, elem) {
-    docRows[i] = getData($(this).html());
-  });
-  _.forEach(docRows, function (value, key) {
-    if (value.length > 15 && value.length < 100) {
-      var newValue = _.replace(value.split('//')[1], ']', '');
-      docs.push(newValue);
+      var url = this.url;
+      var p = new Promise(function (resolve, reject) {
+        request(url).then(function (result) {
+          return resolve(cheerio.load(result));
+        }).catch(reject);
+      });
+      return p.then(function (result) {
+        return _this.parseFields(result);
+      });
     }
-  });
-  return docs;
-}
+  }, {
+    key: 'parseFields',
+    value: function parseFields($) {
+      var fields = {};
+      this.getInfoRows($, fields);
+      fields.attrs = this.getAttrRows($);
+      fields.docs = this.getDocRows($);
+      fields.prices = this.getPriceList($, fields);
+      return R.map(function (field) {
+        return field === '' ? undefined : field;
+      }, fields);
+    }
+  }, {
+    key: 'getInfoRows',
+    value: function getInfoRows($, initFields) {
+      var fields = initFields;
+      var infoRows = [];
 
-function getAttrRows($) {
-  var attrThRows = [];
-  var attrTdRows = [];
-  var attrs = [];
+      try {
+        var that = this;
+        $('#product-details-side tr').each(function (i, elem) {
+          var elemHtml = $(elem).html();
+          infoRows[i] = that.getData(elemHtml);
+        });
 
-  $('#prod-att-title-row').remove();
+        _lodash2.default.forEach(infoRows, function (value, key) {
+          if (that.getValue(value, 'Digi-Key零件編號')) {
+            fields.sku = that.getValue(value, 'Digi-Key零件編號');
+          } else if (that.getValue(value, '現有數量')) {
+            fields.amount = that.getValue(value, '現有數量');
+            if (!_lodash2.default.isNumber(fields.amount)) fields.amount = fields.amount.split(' ')[0];
+          } else if (that.getValue(value, '製造商 ')) {
+            fields.mfs = that.getValue(value, '製造商');
+          } else if (that.getValue(value, '製造商零件編號')) {
+            fields.pn = that.getValue(value, '製造商零件編號');
+          } else if (that.getValue(value, '說明 ')) {
+            fields.desc = that.getValue(value, '說明');
+          } else if (that.getValue(value, '無鉛狀態 / RoHS 指令狀態')) {
+            fields.leadAndRohs = that.getValue(value, '無鉛狀態 / RoHS 指令狀態');
+          } else {}
+        });
+      } catch (e) {
+        console.error('e:', e.message);
+      }
+      return fields;
+    }
+  }, {
+    key: 'getData',
+    value: function getData(htmlString) {
+      var data = htmlToText.fromString(htmlString, {
+        wordwrap: 130
+      });
+      return data;
+    }
+  }, {
+    key: 'getArrayData',
+    value: function getArrayData($, selector) {
+      var data = htmlToText.fromString($(selector), {
+        wordwrap: 130
+      });
+      return _lodash2.default.split(data, ' ');
+    }
+  }, {
+    key: 'getIndex',
+    value: function getIndex(data, title) {
+      var index = _lodash2.default.findIndex(data, function (o) {
+        return o.indexOf(title) != -1;
+      });
+      return index;
+    }
+  }, {
+    key: 'getValue',
+    value: function getValue(value, title) {
+      if (value.indexOf(title) != -1) {
+        return value.substring(title.length + 1);
+      }
+      return;
+    }
+  }, {
+    key: 'getDocRows',
+    value: function getDocRows($) {
+      var that = this;
+      var docRows = [];
+      var docs = [];
 
-  $('.prod-attributes .attributes-td-checkbox').each(function (i, elem) {
-    $(elem).remove();
-  });
+      $('.leftdivs .attributes-table-main td').each(function (i, elem) {
+        docRows[i] = that.getData($(this).html());
+      });
+      _lodash2.default.forEach(docRows, function (value, key) {
+        if (value.indexOf('//') > -1) {
+          var newValue = _lodash2.default.replace(value.split('//')[1], ']', '');
+          docs.push(newValue);
+        }
+      });
+      return docs;
+    }
+  }, {
+    key: 'getAttrRows',
+    value: function getAttrRows($) {
+      var that = this;
+      var attrThRows = [];
+      var attrTdRows = [];
+      var attrs = [];
 
-  $('.prod-attributes th').each(function (i, elem) {
-    attrThRows[i] = getData($(this).html());
-    attrThRows[i] = attrThRows[i].split('?')[0];
-  });
+      $('#prod-att-title-row').remove();
 
-  $('.prod-attributes td').each(function (i, elem) {
-    attrTdRows[i] = getData($(this).html());
-  });
+      $('.prod-attributes .attributes-td-checkbox').each(function (i, elem) {
+        $(elem).remove();
+      });
 
-  _.forEach(attrThRows, function (value, index) {
-    var obj = {};
-    obj.key = value;
-    obj.value = attrTdRows[index];
-    attrs.push(obj);
-  });
-  return attrs;
-}
+      $('.prod-attributes th').each(function (i, elem) {
+        attrThRows[i] = that.getData($(this).html());
+        attrThRows[i] = attrThRows[i].split('?')[0];
+      });
 
-function getPriceList($, initFields) {
-  var dollars = getArrayData($, '#product-dollars');
-  var priceCollection = [];
-  for (var i = 3; i < dollars.length; i = i + 3) {
-    var obj = {};
-    obj.amount = dollars[i];
-    obj.unitPrice = dollars[i + 1];
-    priceCollection.push(obj);
-  }
-  return priceCollection;
-}
+      $('.prod-attributes td').each(function (i, elem) {
+        attrTdRows[i] = that.getData($(this).html());
+      });
 
-function parseFields($) {
-  var fields = {};
-  getInfoRows($, fields);
-  fields.attrs = getAttrRows($);
-  fields.docs = getDocRows($);
-  fields.prices = getPriceList($, fields);
-  return R.map(function (field) {
-    return field === '' ? undefined : field;
-  }, fields);
-}
+      _lodash2.default.forEach(attrThRows, function (value, index) {
+        var obj = {};
+        obj.key = value;
+        obj.value = attrTdRows[index];
+        attrs.push(obj);
+      });
+      return attrs;
+    }
+  }, {
+    key: 'getPriceList',
+    value: function getPriceList($, initFields) {
+      var dollars = this.getArrayData($, '#product-dollars');
+      var priceCollection = [];
+      for (var i = 3; i < dollars.length; i = i + 3) {
+        var obj = {};
+        obj.amount = dollars[i];
+        obj.unitPrice = dollars[i + 1];
+        priceCollection.push(obj);
+      }
+      return priceCollection;
+    }
+  }, {
+    key: 'validate',
+    value: function validate(opts) {
+      return true;
+    }
+  }, {
+    key: 'buildUrl',
+    value: function buildUrl(opts) {
+      return opts.url;
+    }
+  }]);
 
-function validate(opts) {
-  return true;
-}
+  return Product;
+}();
 
-function buildUrl(opts) {
-  return opts.url;
-}
-
-module.exports = memoize(product);
+exports.default = Product;

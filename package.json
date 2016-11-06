@@ -5,8 +5,7 @@
   "description": "scraper",
   "main": "dict/index.js",
   "scripts": {
-    "test": "node node_modules/mocha/bin/mocha --reporter spec test-dist/*",
-    "test2": "mocha test/**/lib.*.js",
+    "test": "npm run build && mocha test/**/lib.*.js",
     "dev-test": "nodemon --exec 'mocha test/**/lib.*.js' || true",
     "build:source": "rimraf dist/ && babel lib/ --out-dir dist/",
     "build:tests": "rimraf test-dist/ && babel test/ --out-dir test-dist/",
