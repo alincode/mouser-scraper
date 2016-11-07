@@ -33,7 +33,7 @@ var Product = function () {
     value: function getResult() {
       var _this = this;
 
-      if (this.html) return this.parseFields(cheerio.load(html));
+      if (this.html) return this.parseFields(cheerio.load(this.html));
 
       var url = this.url;
       var p = new Promise(function (resolve, reject) {
