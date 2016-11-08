@@ -1,6 +1,6 @@
 module.exports = {
   ProductFields: [
-    'sku', 'amount', 'mfs', 'pn', 'desc', 'leadAndRohs', 'attrs', 'docs',
-    'prices'
+    'sku', 'amount', 'mfs', 'pn', 'description', 'rohs', 'attrs',
+    'docs', 'prices'
   ]
 };
