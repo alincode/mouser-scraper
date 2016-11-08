@@ -1,7 +1,7 @@
 {
   "name": "digikey-scraper-sandbox",
   "private": "true",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "scraper",
   "main": "dist/product.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "dev-test": "nodemon --exec 'mocha test/**/lib.*.js' || true",
     "build:source": "rimraf dist/ && babel lib/ --out-dir dist/",
     "clean": "rimraf dist",
-    "build": "npm run build:source && npm run build:tests"
+    "build": "npm run build:source"
   },
   "repository": {
     "type": "git",

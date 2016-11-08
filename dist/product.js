@@ -81,9 +81,9 @@ var Product = function () {
           } else if (that.getValue(value, '製造商零件編號')) {
             fields.pn = that.getValue(value, '製造商零件編號');
           } else if (that.getValue(value, '說明 ')) {
-            fields.desc = that.getValue(value, '說明');
+            fields.description = that.getValue(value, '說明');
           } else if (that.getValue(value, '無鉛狀態 / RoHS 指令狀態')) {
-            fields.leadAndRohs = that.getValue(value, '無鉛狀態 / RoHS 指令狀態');
+            fields.rohs = that.getValue(value, '無鉛狀態 / RoHS 指令狀態');
           } else {}
         });
       } catch (e) {
