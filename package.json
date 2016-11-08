@@ -5,11 +5,10 @@
   "description": "scraper",
   "main": "dist/product.js",
   "scripts": {
-    "test": "npm run build && mocha test/**/lib.*.js",
+    "test": "mocha test/**/lib.*.js",
     "dev-test": "nodemon --exec 'mocha test/**/lib.*.js' || true",
     "build:source": "rimraf dist/ && babel lib/ --out-dir dist/",
-    "build:tests": "rimraf test-dist/ && babel test/ --out-dir test-dist/",
-    "clean": "rimraf dist/ && rimraf test-dist/",
+    "clean": "rimraf dist",
     "build": "npm run build:source && npm run build:tests"
   },
   "repository": {
