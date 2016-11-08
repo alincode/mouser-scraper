@@ -1,3 +1,3 @@
-# sandbox-scraper
+# Digikey Scraper
 
-`npm test`
+[![Build Status](https://travis-ci.org/alincode/digikey-scraper-sandbox.svg?branch=master)](https://travis-ci.org/alincode/digikey-scraper-sandbox)
