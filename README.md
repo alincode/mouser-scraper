@@ -6,8 +6,10 @@
 
 **2016/11/10**
 
+```
 attrs ---> attributes
 docs ---> documents
 prices ---> priceStores
 desc ---> description
 leadAndRohs ---> boolean rohs=, boolean lead
+```
