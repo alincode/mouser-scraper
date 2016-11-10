@@ -2,6 +2,12 @@
 
 [![Build Status](https://travis-ci.org/alincode/digikey-scraper-sandbox.svg?branch=master)](https://travis-ci.org/alincode/digikey-scraper-sandbox)
 
+### commend
+
+```
+npm version patch
+```
+
 ### changelog
 
 **2016/11/10**
