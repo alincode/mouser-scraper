@@ -60,12 +60,12 @@ var Product = function () {
   }, {
     key: 'getLead',
     value: function getLead(val) {
-      return val.indexOf('無鉛' > -1);
+      return val.indexOf('無鉛') > -1;
     }
   }, {
     key: 'getRohs',
     value: function getRohs(val) {
-      return val.indexOf('符合 RoHS 指令' > -1);
+      return val.indexOf('符合 RoHS 指令') > -1;
     }
   }, {
     key: 'getInfoRows',
