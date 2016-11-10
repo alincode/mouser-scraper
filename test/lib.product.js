@@ -7,21 +7,22 @@ var Digikey = require('../lib/product').default;
 
 function checklist(result) {
   result.should.have.keys(ProductFields);
-  result.sku.should.String;
-  result.amount.should.Number;
-  result.mfs.should.String;
-  result.pn.should.String;
-  result.description.should.String;
-  result.lead.should.Boolean;
-  result.rohs.should.Boolean;
-  result.attributes.should.Array;
+  result.sku.should.be.a('string');
+  result.amount.should.be.a('number');
+  result.mfs.should.be.a('string');
+  result.pn.should.be.a('string');
+  result.description.should.be.a('string');
+  result.lead.should.be.a('boolean');
+  result.rohs.should.be.a('boolean');
+  result.attributes.should.be.a('array');
   result.attributes.length.should.above(0);
   result.attributes[0].should.have.keys(['key', 'value']);
-  result.documents.should.Array;
+  result.documents.should.be.a('array');
   result.documents.length.should.above(0);
-  result.priceStores.should.Array;
+  result.priceStores.should.be.a('array');
   result.priceStores.length.should.above(0);
   result.priceStores[0].should.have.keys(['amount', 'unitPrice']);
+  result.priceStores[0].amount.should.be.a('number');
 }
 
 describe('product page', function() {
@@ -31,6 +32,8 @@ describe('product page', function() {
         'http://www.digikey.tw/product-detail/zh/comchip-technology/ZENER-KIT/641-1426-ND/2217259'
       );
       let result = await digikey.getResult();
+      console.log("==========> result:", result);
+
       checklist(result);
       done();
     } catch (e) {
