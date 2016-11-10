@@ -50,12 +50,22 @@ var Product = function () {
     value: function parseFields($) {
       var fields = {};
       this.getInfoRows($, fields);
-      fields.attrs = this.getAttrRows($);
-      fields.docs = this.getDocRows($);
-      fields.prices = this.getPriceList($, fields);
+      fields.attributes = this.getAttrRows($);
+      fields.documents = this.getDocuments($);
+      fields.priceStores = this.getPriceStores($, fields);
       return R.map(function (field) {
         return field === '' ? undefined : field;
       }, fields);
+    }
+  }, {
+    key: 'getLead',
+    value: function getLead(val) {
+      return val.indexOf('無鉛' > -1);
+    }
+  }, {
+    key: 'getRohs',
+    value: function getRohs(val) {
+      return val.indexOf('符合 RoHS 指令' > -1);
     }
   }, {
     key: 'getInfoRows',
@@ -83,7 +93,9 @@ var Product = function () {
           } else if (that.getValue(value, '說明 ')) {
             fields.description = that.getValue(value, '說明');
           } else if (that.getValue(value, '無鉛狀態 / RoHS 指令狀態')) {
-            fields.rohs = that.getValue(value, '無鉛狀態 / RoHS 指令狀態');
+            var val = that.getValue(value, '無鉛狀態 / RoHS 指令狀態');
+            fields.lead = that.getLead(val);
+            fields.rohs = that.getRohs(val);
           } else {}
         });
       } catch (e) {
@@ -119,13 +131,13 @@ var Product = function () {
     key: 'getValue',
     value: function getValue(value, title) {
       if (value.indexOf(title) != -1) {
-        return value.substring(title.length + 1);
+        return _lodash2.default.trim(value.substring(title.length + 1));
       }
       return;
     }
   }, {
-    key: 'getDocRows',
-    value: function getDocRows($) {
+    key: 'getDocuments',
+    value: function getDocuments($) {
       var that = this;
       var docRows = [];
       var docs = [];
@@ -173,17 +185,24 @@ var Product = function () {
       return attrs;
     }
   }, {
-    key: 'getPriceList',
-    value: function getPriceList($, initFields) {
+    key: 'getPriceStores',
+    value: function getPriceStores($, initFields) {
+      var that = this;
       var dollars = this.getArrayData($, '#product-dollars');
       var priceCollection = [];
       for (var i = 3; i < dollars.length; i = i + 3) {
         var obj = {};
-        obj.amount = dollars[i];
-        obj.unitPrice = dollars[i + 1];
-        priceCollection.push(obj);
+        priceCollection.push(that.getPriceItem(dollars, i));
       }
       return priceCollection;
+    }
+  }, {
+    key: 'getPriceItem',
+    value: function getPriceItem(dollars, i) {
+      var obj = {};
+      obj.amount = dollars[i];
+      obj.unitPrice = dollars[i + 1];
+      return obj;
     }
   }, {
     key: 'validate',
