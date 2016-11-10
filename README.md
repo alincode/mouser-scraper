@@ -11,5 +11,5 @@ attrs ---> attributes
 docs ---> documents
 prices ---> priceStores
 desc ---> description
-leadAndRohs ---> boolean rohs=, boolean lead
+leadAndRohs ---> boolean rohs, boolean lead
 ```
