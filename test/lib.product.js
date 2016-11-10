@@ -63,4 +63,17 @@ describe('product page', function() {
       done(e);
     }
   });
+
+  it('case 4', async(done) => {
+    try {
+      let digikey = new Digikey(null,
+        'http://www.digikey.tw/product-detail/zh/comchip-technology/ZENER-KIT/641-1426-ND/2217259'
+      );
+      let result = await digikey.getResult();
+      checklist(result);
+      done();
+    } catch (e) {
+      done(e);
+    }
+  });
 });
