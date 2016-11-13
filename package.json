@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alincode/digikey-scraper-sandbox"
+    "url": "https://github.com/alincode/digikey-cn-scraper"
   },
   "keywords": [
     "scraper"
