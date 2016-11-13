@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import {
   ProductFields
 }
@@ -25,15 +28,25 @@ function checklist(result) {
   result.priceStores[0].amount.should.be.a('number');
 }
 
+function getHtml(fileName) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile(path.join(__dirname, fileName), function(err, data) {
+      if (err) return console.log(err);
+      resolve(data.toString());
+    })
+  });
+}
+
 describe('product page', function() {
   it('case 1', async(done) => {
     try {
-      let digikey = new Digikey(null,
-        'http://www.digikey.tw/product-detail/zh/comchip-technology/ZENER-KIT/641-1426-ND/2217259'
+      let html = await getHtml(
+        'sample.html'
+      );
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/MAX30100EFD-/MAX30100EFD-ND?recordId=5020894'
       );
       let result = await digikey.getResult();
-      console.log("==========> result:", result);
-
       checklist(result);
       done();
     } catch (e) {
@@ -43,34 +56,11 @@ describe('product page', function() {
 
   it('case 2', async(done) => {
     try {
-      let digikey = new Digikey(null,
-        'http://www.digikey.tw/product-detail/zh/m-a-com-technology-solutions/MADP-011069-SAMKIT/1465-1784-ND/6003062'
+      let html = await getHtml(
+        'sample.html'
       );
-      let result = await digikey.getResult();
-      checklist(result);
-      done();
-    } catch (e) {
-      done(e);
-    }
-  });
-
-  it('case 3', async(done) => {
-    try {
-      let digikey = new Digikey(null,
-        'http://www.digikey.tw/product-detail/zh/tpi-test-products-int/120085/290-1925-ND/1832239'
-      );
-      let result = await digikey.getResult();
-      checklist(result);
-      done();
-    } catch (e) {
-      done(e);
-    }
-  });
-
-  it('case 4', async(done) => {
-    try {
-      let digikey = new Digikey(null,
-        'http://www.digikey.tw/product-detail/zh/comchip-technology/ZENER-KIT/641-1426-ND/2217259'
+      let digikey = new Digikey(html,
+        'http://www.digikey.com.cn/search/zh/AFP85151/1110-3837-ND?recordId=5267788'
       );
       let result = await digikey.getResult();
       checklist(result);
