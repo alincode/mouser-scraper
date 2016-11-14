@@ -26,7 +26,7 @@ function request(opts, limit) {
     if (reason.response && reason.response.statusCode === 404) {
       throw Error('App not found (404)');
     }
-    throw Error('Error requesting Google Play:' + reason.message);
+    throw Error('Error requesting Digikey CN:' + reason.message);
   });
 }
 
