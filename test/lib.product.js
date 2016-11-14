@@ -6,7 +6,7 @@ import {
 }
 from './field';
 
-var Digikey = require('../lib/product').default;
+var GrabStrategy = require('../lib/product').default;
 
 function checklist(result) {
   result.should.have.keys(ProductFields);
@@ -43,10 +43,10 @@ describe('product page', function() {
       let html = await getHtml(
         'sample.html'
       );
-      let digikey = new Digikey(html,
-        'http://www.digikey.com.cn/search/zh/MAX30100EFD-/MAX30100EFD-ND?recordId=5020894'
+      let grabStrategy = new GrabStrategy(html,
+        'http://www.mouser.cn/ProductDetail/Cree-Inc/XPEBRY-L1-0000-00S01/?qs=sGAEpiMZZMurHQmwyojo5NcGAOXvaz%252bjSO1mEKF%252bViaGhKf2J%252bdy5Q%3d%3d'
       );
-      let result = await digikey.getResult();
+      let result = await grabStrategy.getResult();
       checklist(result);
       done();
     } catch (e) {
@@ -59,10 +59,10 @@ describe('product page', function() {
       let html = await getHtml(
         'sample.html'
       );
-      let digikey = new Digikey(html,
-        'http://www.digikey.com.cn/search/zh/AFP85151/1110-3837-ND?recordId=5267788'
+      let grabStrategy = new GrabStrategy(html,
+        'http://www.mouser.cn/ProductDetail/Fairchild-Semiconductor/FL77904MX/?qs=sGAEpiMZZMt82OzCyDsLFOSVHEbI1IbejkmDxCbcrM4%3d'
       );
-      let result = await digikey.getResult();
+      let result = await grabStrategy.getResult();
       checklist(result);
       done();
     } catch (e) {
