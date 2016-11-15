@@ -51,29 +51,18 @@ var Product = function () {
       var fields = {};
       fields.priceStores = this.getPriceStores($, fields);
       this.getInfoRows($, fields);
-      this.getSubInfoRows($, fields);
       fields.attributes = this.getAttrRows($);
-      fields.documents = this.getDocuments($);
       fields.imageUrl = this.getImageUrl($);
       return R.map(function (field) {
         return field === '' ? undefined : field;
       }, fields);
     }
   }, {
-    key: 'getLead',
-    value: function getLead(val) {
-      return val.indexOf('无铅') > -1;
-    }
-  }, {
-    key: 'getRohs',
-    value: function getRohs(val) {
-      return val.indexOf('符合限制有害物质指令(RoHS)规范要求') > -1;
-    }
-  }, {
     key: 'getAmount',
-    value: function getAmount(val) {
+    value: function getAmount($) {
       var that = this;
-      var amount = that.getData(val.split('可立即发货')[0].split(':')[1]);
+      var amount = that.getData($($('#availability .av-col2')[0]).html());
+      amount = amount.split(' ')[0];
       amount = amount.replace(',', '');
       return parseInt(amount);
     }
@@ -85,52 +74,28 @@ var Product = function () {
 
       try {
         var that = this;
-        $('#pricingTable tr').each(function (i, elem) {
-          if (i == 0) return;
+
+        $('#product-desc .row').each(function (i, elem) {
           var elemHtml = $(elem).html();
-          var val = $(elem).find('td').html();
+          var title = that.getData($(elem).find('b').html());
+          var val = $(elem).find('.col-xs-8').html();
           val = that.getData(val);
-          if (i == 1) fields.sku = val;
-          if (i == 2) fields.amount = that.getAmount(val);
-          if (i == 3) fields.mfs = val;
-          if (i == 4) fields.pn = val;
-          if (i == 5) fields.description = val;
-          if (i == 6) {
-            fields.lead = that.getLead(val);
-            fields.rohs = that.getRohs(val);
+          if (title.indexOf('Mouser 零件编号') != -1) fields.sku = val;
+          if (title.indexOf('制造商零件编号') != -1) fields.pn = val;
+          if (title.indexOf('制造商:') != -1) fields.mfs = val;
+          if (title.indexOf('说明：') != -1) {
+            fields.category = val;
+            fields.description = val;
+          }
+          if (val.indexOf('pdf') != -1) {
+            var pdfUrl = $(elem).find('.col-xs-8').find('#ctl00_ContentMain_rptrCatalogDataSheet_ctl00_lnkCatalogDataSheet').attr('href');
+            var docs = [];
+            docs.push(pdfUrl);
+            fields.documents = docs;
           }
         });
-      } catch (e) {
-        console.error('e:', e.message);
-      }
-      return fields;
-    }
 
-    // 一般訊息
-
-  }, {
-    key: 'getSubInfoRows',
-    value: function getSubInfoRows($, initFields) {
-      var fields = initFields;
-      var infoRows = [];
-
-      try {
-        var that = this;
-        $('#DatasheetsTable1 tr').each(function (i, elem) {
-          if (i == 0) return;
-          var elemHtml = $(elem).html();
-          var title = $(elem).find('th').html();
-          var val = $(elem).find('td').html();
-          title = that.getData(title);
-          val = that.getData(val);
-          var isExistPkg = title.indexOf('标准包装') != -1;
-          if (isExistPkg) fields.pkg = val;
-          if (title.indexOf('包装') != -1 && !isExistPkg) {
-            fields.pkg_type = val;
-          }
-          if (title == '类别') fields.category = val;
-          if (title == '其它名称') fields.param = val;
-        });
+        fields.amount = that.getAmount($);
       } catch (e) {
         console.error('e:', e.message);
       }
@@ -141,7 +106,9 @@ var Product = function () {
     value: function getImageUrl($) {
       try {
         var that = this;
-        return $('.beablock-image img').attr('src');
+        var imageUrl = $('.default-img').attr('src').replace('../../../', '');
+        imageUrl = 'http://www.mouser.cn/' + imageUrl;
+        return imageUrl;
       } catch (e) {
         return;
       }
@@ -178,16 +145,6 @@ var Product = function () {
       }
       return;
     }
-  }, {
-    key: 'getDocuments',
-    value: function getDocuments($) {
-      var that = this;
-      var docRows = [];
-      var docs = [];
-      var docUrl = $('.lnkDatasheet').attr('href');
-      docs.push(docUrl);
-      return docs;
-    }
 
     // 規格
 
@@ -199,37 +156,41 @@ var Product = function () {
       var attrTdRows = [];
       var attrs = [];
 
-      $('#SpecificationTable th').each(function (i, elem) {
-        attrThRows[i] = that.getData($(this).html());
-        attrThRows[i] = attrThRows[i].split('?')[0];
-      });
-
-      $('#SpecificationTable td').each(function (i, elem) {
-        attrTdRows[i] = that.getData($(this).html());
-      });
-
-      _lodash2.default.forEach(attrThRows, function (value, index) {
+      $('.specs tr').each(function (i, elem) {
         var obj = {};
-        obj.key = value;
-        obj.value = attrTdRows[index];
+        obj.key = that.getData($(elem).find('.leftcol').html());
+        obj.value = that.getData($(elem).find('.ProductDetailData').html());
         attrs.push(obj);
       });
       return attrs;
     }
   }, {
+    key: 'getPriceStoresAmount',
+    value: function getPriceStoresAmount($, elem) {
+      var that = this;
+      var amount = $(elem).find('.PriceBreakQuantity').html().replace(',', '');
+      amount = parseInt(that.getData(amount));
+      return amount;
+    }
+  }, {
+    key: 'getPriceStoresPrice',
+    value: function getPriceStoresPrice($, elem) {
+      var that = this;
+      var price = $(elem).find('.PriceBreakPrice').html().substring(1);
+      price = that.getData(price);
+      return price;
+    }
+  }, {
     key: 'getPriceStores',
     value: function getPriceStores($, initFields) {
       var that = this;
-      var dollars = $('.catalog-pricing tr');
+      var dollars = $('.PriceBreakQuantity').parent();
       var priceCollection = [];
-      $('.catalog-pricing tr').each(function (i, elem) {
+      dollars.each(function (i, elem) {
         var obj = {};
-        $(elem).find('td').each(function (i, subelem) {
-          var val = $(subelem).html();
-          if (i == 0) obj.amount = parseInt(val.replace(',', ''));
-          if (i == 1) obj.unitPrice = val.substring(7);
-          if (i == 2) priceCollection.push(obj);
-        });
+        obj.amount = that.getPriceStoresAmount($, elem);
+        obj.unitPrice = that.getPriceStoresPrice($, elem);
+        priceCollection.push(obj);
       });
       $('.catalog-pricing tr').remove();
       return priceCollection;
