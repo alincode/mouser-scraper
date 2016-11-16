@@ -57,7 +57,7 @@ describe('product page', function() {
   it('case 2', async(done) => {
     try {
       let html = await getHtml(
-        'sample.html'
+        'sample2.html'
       );
       let grabStrategy = new GrabStrategy(html,
         'http://www.mouser.cn/ProductDetail/Fairchild-Semiconductor/FL77904MX/?qs=sGAEpiMZZMt82OzCyDsLFOSVHEbI1IbejkmDxCbcrM4%3d'
