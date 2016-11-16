@@ -181,9 +181,18 @@ var Product = function () {
       return price;
     }
   }, {
-    key: 'getPriceStores',
-    value: function getPriceStores($, initFields) {
+    key: 'getCurrency',
+    value: function getCurrency($) {
       var that = this;
+      var currency = that.getData($('.tdFlag').parent().text());
+      currency = currency.split(' ')[2];
+      return currency;
+    }
+  }, {
+    key: 'getPriceStores',
+    value: function getPriceStores($, fields) {
+      var that = this;
+      fields.currency = that.getCurrency($);
       var dollars = $('.PriceBreakQuantity').parent();
       var priceCollection = [];
       dollars.each(function (i, elem) {
